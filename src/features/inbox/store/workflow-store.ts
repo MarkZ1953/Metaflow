@@ -28,7 +28,8 @@ export type Page =
   | 'transfers'
   | 'presets'
   | 'duplicates'
-  | 'metadata';
+  | 'metadata'
+  | 'classification';
 interface WorkflowState {
   snapshot: InboxSnapshot;
   page: Page;

@@ -2,6 +2,23 @@ import { z } from 'zod';
 
 const backendErrorSchema = z.object({ code: z.string() });
 const errorMessages: Record<string, string> = {
+  MEDIA_PROTECTED:
+    'Este archivo está marcado para conservar. Desmarca Conservar en Depuración inteligente antes de retirarlo.',
+  CLASSIFICATION_REVIEW_EXPIRED:
+    'La revisión ya no está disponible. Vuelve a analizar los archivos.',
+  INVALID_MEDIA_SELECTION: 'Selecciona entre 1 y 1.000 archivos de la revisión actual.',
+  MEDIA_MODEL_UNAVAILABLE:
+    'No se pudo cargar el modelo local. Ejecuta Metaflow con su carpeta classification o utiliza el instalador completo.',
+  MEDIA_MODEL_INVALID: 'El modelo local no es válido. Reinstala la versión completa de Metaflow.',
+  MEDIA_INFERENCE_FAILED: 'No se pudo analizar este archivo con el modelo local.',
+  VIDEO_PREVIEW_UNAVAILABLE:
+    'Faltan los componentes locales para revisar videos. Reinstala Metaflow.',
+  VIDEO_PREVIEW_FAILED:
+    'No se pudo leer este video. Revisa que esté disponible localmente y su formato.',
+  DUPLICATE_REVIEW_EXPIRED: 'La comparación ya no está disponible. Vuelve a buscar duplicados.',
+  UNSUPPORTED_IMAGE: 'Este tipo de archivo no dispone de vista previa de imagen.',
+  IMAGE_TOO_LARGE:
+    'La imagen supera el tamaño permitido para una vista previa. Comprueba el archivo antes de decidir.',
   TIMESTAMP_PRECISION:
     'El disco no conservó la fecha con la precisión solicitada. Revisa el registro de recuperación antes de continuar.',
   INVALID_NAME:

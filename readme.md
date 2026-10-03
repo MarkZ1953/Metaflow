@@ -1,6 +1,6 @@
-# Metaflow 0.2.1
+# Metaflow 0.5.1
 
-Aplicación de escritorio para organizar un Inbox por fechas y administrar carpetas de distintos discos en un Workspace. Las transferencias comparten renombrado, duplicados, revisión, historial persistente y Undo. Windows es la plataforma compatible con operaciones de archivos.
+Aplicación de escritorio para organizar un Inbox por fechas, administrar carpetas de distintos discos y depurar imágenes y videos. Las transferencias, la revisión de duplicados y la depuración comparten historial persistente, respaldos y Undo. Windows es la plataforma compatible con operaciones de archivos.
 
 ## Usar el Workspace
 
@@ -48,34 +48,82 @@ Se compara tamaño, una muestra inicial/final y, cuando coinciden, BLAKE3 comple
 
 La revisión permite conservar existente, conservar entrante, conservar ambos, omitir o reemplazar. Conservar existente y omitir dejan el entrante en su origen. Conservar entrante envía las copias existentes a recuperación; reemplazar conserva la ruta del existente. Ambos guardan respaldos para Undo. Los duplicados entre archivos todavía pendientes del mismo lote permiten conservar ambos u omitir.
 
-**Duplicados** analiza explícitamente carpetas administradas, agrupa contenidos idénticos y muestra nombres, rutas, tamaño, fechas y hash. Elige qué copia conservar y revisa el traslado de las otras a recuperación. Nunca elimina duplicados automáticamente. Se informa cualquier análisis incompleto por ubicaciones inaccesibles.
+En **Duplicados**, pulsa **Buscar duplicados** para revisar las carpetas administradas. Activa **Incluir imágenes parecidas** para encontrar también fotos con distinta resolución o compresión. Los duplicados exactos se comprueban por contenido; las imágenes parecidas son sugerencias para revisar visualmente.
+
+La revisión muestra dos archivos lado a lado, con imagen, ruta, tamaño, fechas y resolución. Usa **Acercar imagen**, **Alejar imagen** y **Ajustar** para comparar los detalles. **Eliminar esta copia** retira únicamente el archivo elegido a recuperación y avanza a la siguiente comparación. **Conservar ambas** o **Siguiente** permiten continuar; **No son iguales · Descartar** guarda el descarte para que no vuelva a aparecer mientras ambos archivos conserven su contenido e identidad. Puedes volver a la comparación anterior o restablecer los descartes para analizarlos otra vez. **Deshacer última eliminación** restaura la última copia retirada.
+
+Las vistas previas admiten JPEG, PNG, GIF, WebP, BMP, TIFF e ICO, con límites de tamaño y resolución. GIF y TIFF se revisan por su primer fotograma o página. Los videos y otros archivos pueden aparecer como duplicados exactos con sus datos, sin vista previa visual. Se informa de archivos inaccesibles y análisis limitados; ninguna coincidencia elimina archivos automáticamente.
 
 Los respaldos permanecen en `.metaflow-recovery`, con rutas registradas en el historial. No se incluyen en análisis de duplicados ni se purgan automáticamente. Undo de copia conserva el original y mueve la copia a recuperación; Undo de movimiento la devuelve al origen. Contenido editado, identidad distinta o rutas ocupadas impiden restaurar ese elemento y conservan los archivos.
 
+## Depuración inteligente de imágenes y videos
+
+1. Abre **Depuración inteligente**. En **Dónde analizar → Carpetas que elijo**, pulsa **Elegir carpetas** para seleccionar una o varias carpetas con el selector de Windows. Puedes añadir más carpetas en otro disco volviendo a abrir el selector, quitar las que no quieras analizar y elegir si incluir subcarpetas y videos. Estas carpetas no se añaden al Workspace. La opción **Todas las carpetas del Workspace y el Inbox** conserva el análisis de todas las carpetas administradas.
+2. Pulsa **Analizar imágenes y videos**. La IA CLIP trabaja localmente con la CPU: tus fotos y videos no se envían a un servicio externo. El primer análisis puede tardar más; los resultados se guardan para reutilizarlos cuando el contenido no cambia.
+3. Filtra la galería por **Personas**, **Animales**, **Capturas de pantalla**, **Memes**, **Documentos y texto**, **Paisajes**, **Objetos** u **Otros**, además de tipo, estado y nombre/ruta. Las categorías pueden coincidir: un meme con una cara puede aparecer en Personas y en Memes. **No concluyente** indica que debes revisar el contenido; los archivos que no se pudieron analizar también se identifican.
+4. Pulsa **Revisar archivo** o **Ampliar** para ver la imagen, acercarla y pasar al archivo anterior o siguiente. Los videos muestran hasta tres fotogramas con su posición temporal; son una muestra y pueden omitir otras escenas.
+5. Marca **Conservar**, **Conservar y siguiente** o **Conservar selección** para proteger lo que quieres guardar y ocultarlo de la depuración. Usa **Mostrar conservados** para verlos y seleccionarlos de nuevo, y **Ocultar conservados** para continuar depurando. La decisión se guarda por contenido y también protege sus copias idénticas, incluso en **Duplicados**. **Quitar protección y exclusión** devuelve la selección a archivos normales que puedes eliminar. No impide que otras aplicaciones modifiquen o eliminen esos archivos.
+6. Selecciona manualmente lo que quieres retirar y pulsa **Eliminar selección**, o elimina un archivo desde su revisión. La confirmación muestra las rutas y excluye los archivos marcados Conservar y los excluidos de esta depuración. Cada eliminación guarda un respaldo y una operación en **Historial**; puedes usar **Deshacer última operación** o deshacer desde el historial.
+7. Para separar las fotos y videos que quieres guardar, selecciónalos y pulsa **Mover / Copiar selección**. Elige una carpeta con el selector de Windows, revisa las rutas y los conflictos y confirma el lote. **Mover** los retira de la carpeta analizada y de la galería; **Copiar** conserva los originales. Los archivos conservados y excluidos también se pueden transferir. Puedes elegir otra carpeta en el siguiente lote. El destino no se añade automáticamente a las carpetas del Workspace, y cada transferencia queda en Historial con Undo.
+
+**Seleccionar todos los visibles** incluye los resultados de los filtros actuales, hasta el límite de 1.000 archivos por lote. Para seleccionar solo conservados, elige el estado **Conservar**; para seleccionar también excluidos, activa **Mostrar excluidos**.
+
+La selección de carpetas admite hasta 32 ubicaciones y se mantiene mientras Metaflow está abierto, incluso si alternas entre el análisis específico y el general. Después de reiniciar, vuelve a elegir las carpetas externas al Workspace para iniciar otro análisis. Cambiar las carpetas no modifica los resultados existentes: pulsa **Analizar imágenes y videos** o **Volver a analizar** para usar la nueva selección. Una selección vacía no inicia un análisis de todo el Workspace. Las carpetas solapadas no duplican archivos; sin subcarpetas, seleccionar un padre y un hijo analiza directamente ambos niveles.
+
+### Mejorar la detección en tu colección
+
+En **Ajustes de detección**, el análisis **Detallado** incluye la imagen completa y recortes adicionales para no perder personas, texto u objetos situados en los bordes. **Rápido** analiza la imagen completa una sola vez. La sensibilidad **Conservadora** limita las sugerencias ambiguas; **Equilibrada** es la opción inicial; **Amplia** muestra más categorías y candidatos para revisar. Los cambios se guardan; pulsa **Volver a analizar** para aplicarlos a la galería.
+
+**Leer texto de las imágenes** usa OCR local de Windows como ayuda para capturas, memes y documentos. Solo refuerza indicios visuales; tener texto no convierte cualquier foto en una captura. El panel muestra si está disponible y los idiomas instalados. Si Windows no dispone de un reconocedor compatible, el análisis visual continúa. Reinicia Metaflow después de instalar idiomas de OCR en Windows para detectarlos. El texto reconocido se procesa temporalmente y no se guarda en SQLite ni se envía a Internet.
+
+Usa **Corregir categorías** en una tarjeta o en la revisión ampliada, o selecciona varios archivos y pulsa **Corregir selección**. Marca una o varias categorías y guarda. La corrección se recuerda por contenido, también en copias idénticas, y aparece como **Tu corrección**. Esta acción es independiente de Conservar y Excluir: no cambia el archivo ni decide si eliminarlo.
+
+Con **Usar mis ejemplos para sugerir categorías en imágenes parecidas** activado, el siguiente análisis compara las imágenes con hasta 256 ejemplos recientes compatibles con el modelo y modo actuales. Solo aplica categorías a imágenes muy parecidas y con ejemplos que no se contradigan; aparecen como **Sugerido por tus ejemplos** y **No concluyente** para revisarlas. No entrena de nuevo CLIP ni garantiza que todos los memes o capturas se detecten. Desactivar la opción conserva tus correcciones exactas y deja de extenderlas a imágenes parecidas.
+
+**Restablecer detección automática** retira la corrección de los archivos elegidos y sus copias idénticas. **Borrar mis ejemplos** elimina todas las correcciones y restablece las etiquetas automáticas de la galería actual; mantiene Conservar y Excluir. No es necesario borrar ejemplos para ajustar la sensibilidad.
+
+Las etiquetas son sugerencias, no una valoración de lo que te interesa ni una garantía de detección. Nada se selecciona ni se elimina automáticamente. No se identifica a una persona concreta: la categoría Personas solo indica contenido visual relacionado con personas.
+
+Cada análisis admite hasta 10.000 archivos multimedia y 100.000 entradas visitadas. Cada selección admite 1.000 archivos; para colecciones mayores, analiza carpetas más pequeñas o revisa varios lotes. Puedes cancelar el análisis y revisar los resultados ya terminados. La caché se asocia al contenido, versión del modelo, modo, sensibilidad y disponibilidad/configuración de OCR. Las correcciones y la protección Conservar se guardan por separado y no desaparecen al renovar esa caché.
+
+Las imágenes compatibles son JPEG, PNG, GIF, WebP, BMP, TIFF e ICO; GIF y TIFF se analizan por su primer fotograma o página. HEIC/HEIF y AVIF no se clasifican en esta versión. Se admiten videos MP4, MOV, MKV, AVI, WebM, M4V, MPG/MPEG, MTS/M2TS, 3GP y WMV cuando sus datos se pueden decodificar. Los archivos deben estar disponibles localmente. Se omiten formatos no compatibles y se informan errores de lectura o decodificación. Los límites de imagen son 64 MiB de archivo, 40 millones de píxeles y 16.384 píxeles por dimensión, además de un límite de memoria de decodificación.
+
+## Revisar con el teclado
+
+En la revisión ampliada de **Depuración inteligente**, usa **← / →** para cambiar de archivo, **C** para conservar y avanzar, y **Supr** para abrir la eliminación del archivo actual. En la galería, selecciona archivos con sus casillas: **Enter** abre la revisión, **C** conserva la selección y **Supr** prepara la eliminación de los seleccionados sin proteger.
+
+Selecciona archivos y pulsa **Excluir selección** o **E** para ocultarlos durante el análisis actual. **Mostrar excluidos** permite revisarlos y seleccionarlos de nuevo, incluidos los conservados. Puedes reincorporarlos uno por uno con **Incluir de nuevo**, o seleccionar un lote y pulsar **Quitar protección y exclusión**. Mientras están excluidos no se eliminan. Son exclusiones temporales: un análisis nuevo vuelve a incluirlos.
+
+En **Duplicados**, **← / →** cambian de comparación. **1 / 2** eligen la copia izquierda o derecha; un borde y una etiqueta muestran cuál usaría Supr. Cada nueva comparación empieza con la derecha elegida. **C** conserva ambas y avanza; **D** descarta el par. También puedes elegir una copia haciendo clic en su tarjeta.
+
+**Supr** abre una confirmación con las rutas concretas. **Enter** confirma con respaldo y **Esc** cancela. **Ctrl+Z** deshace la última retirada de la revisión cuando esté disponible. Los atajos se suspenden durante operaciones y otros diálogos, y respetan campos de búsqueda, menús y controles de edición. Mantener pulsada una tecla no repite decisiones ni confirmaciones.
+
 ## Ejecutar y compilar
 
-Stack: Tauri 2, Rust, React, TypeScript, Vite, MUI Community, Zustand, React Hook Form, Zod y SQLite. TanStack Virtual limita las filas renderizadas. Rust utiliza notify, chrono, rusqlite, BLAKE3 y unicode-normalization. Los archivos reales permanecen en el filesystem.
+Stack: Tauri 2, Rust, React, TypeScript, Vite, MUI Community, Zustand, React Hook Form, Zod y SQLite. TanStack Virtual limita las filas del explorador; la galería usa paginación y miniaturas con carga diferida. Rust utiliza notify, chrono, rusqlite, BLAKE3, unicode-normalization e image. CLIP se ejecuta con ONNX Runtime en CPU; FFmpeg/FFprobe extraen fotogramas de los videos. Los archivos reales permanecen en el filesystem.
 
 En Windows necesitas Node.js 22.12 o superior, Rust estable, C++ Build Tools y WebView2. Consulta los [prerrequisitos de Tauri](https://v2.tauri.app/start/prerequisites/).
 
 ```powershell
 npm ci
+npm run assets:prepare
 npm run desktop:dev
 npm run desktop:build
 ```
 
-Los scripts utilizan Rust portátil de `.tools/cargo` si existe o la instalación del sistema, sin cambiar el PATH del sistema.
+Ejecuta `npm run assets:prepare` antes de desarrollar o compilar para preparar el modelo local, el runtime y las herramientas de video. Esa preparación necesita Internet para descargar los recursos que falten; analizar tus archivos después no necesita conexión. Los recursos se empaquetan con la aplicación. Los scripts utilizan Rust portátil de `.tools/cargo` si existe o la instalación del sistema, sin cambiar el PATH del sistema.
 
 ```text
 src-tauri/target/release/metaflow.exe
-src-tauri/target/release/bundle/nsis/Metaflow_0.2.1_x64-setup.exe
+src-tauri/target/release/classification/
+src-tauri/target/release/bundle/nsis/Metaflow_0.5.1_x64-setup.exe
 ```
 
-Producción incluye la interfaz y funciona sin Vite ni conexión. WebView2 debe estar instalado; el instalador puede descargarlo si falta. La compilación no tiene firma de distribución. `npm run dev` sirve la vista web en `http://127.0.0.1:1420`; el navegador ofrece únicamente una demostración de desarrollo. Las operaciones reales requieren Tauri.
+Producción incluye la interfaz y funciona sin Vite ni conexión. Usa el instalador para distribuirla con sus recursos; si copias el ejecutable, conserva la carpeta `classification` junto a `metaflow.exe`. Copiar únicamente el `.exe` deja la clasificación sin modelo ni herramientas. WebView2 debe estar instalado; el instalador puede descargarlo si falta. La compilación no tiene firma de distribución. `npm run dev` sirve la vista web en `http://127.0.0.1:1420`; el navegador ofrece únicamente una demostración de desarrollo. Las operaciones reales requieren Tauri.
 
 ## Garantías y límites
 
-- El árbol carga una carpeta a la vez. El recorrido recursivo se solicita al analizar duplicados, transferir una carpeta o corregir sus fechas con subcarpetas; no se recorren discos al arrancar.
+- El árbol carga una carpeta a la vez. El recorrido recursivo se solicita al analizar duplicados, depurar imágenes/videos, transferir una carpeta o corregir sus fechas con subcarpetas; no se recorren discos al arrancar.
 - Inbox procesa archivos regulares directamente dentro de su carpeta. El watcher mantiene estabilidad, sufijos temporales, ocho reintentos de bloqueo y reconciliación periódica.
 - Las operaciones no siguen enlaces, junctions ni reparse points. Solo acceden a raíces seleccionadas o ubicaciones autorizadas del Inbox/reglas.
 - Una revisión inmutable dura diez minutos; cambios de configuración la invalidan. Las transferencias verifican identidad, fechas, tamaño, hash y disponibilidad antes de ejecutar. La corrección de fechas verifica identidad, tamaño y fechas exactas bajo un handle exclusivo, sin leer el contenido. Un conflicto nuevo falla sin sobrescribir.
@@ -102,6 +150,6 @@ npm run rust -- fmt --check
 
 Las pruebas usan archivos generados y cubren regresiones de Inbox/reglas, presets, migración, raíces independientes, duplicados con nombres distintos, falsos positivos del hash parcial, respaldos, cambios tras revisión, cancelación, carpetas anidadas/vacías, transferencias C: ↔ F:, recuperación y Undo. El lote de transferencia de 5.000 comprueba contenido, progreso en bytes y restauración completa; el de 150 mantiene la clasificación 42/51/57 en los tres periodos. Las pruebas de fechas incluyen 120 archivos de distintas extensiones, precisión de 100 ns, conservación de creación/acceso/contenido, cancelación, selección, subcarpetas, exclusiones, bloqueo y recuperación de journal.
 
-El [plan técnico](docs/architecture.md) describe la integración. Comandos IPC pequeños delegan en servicios y repositorios Rust. `rename-engine`, `duplicate-service` y `file-operation-service` son compartidos por Inbox y Workspace. La corrección de fechas comparte ejecución, historial y Undo. Los textos se centralizan en diccionarios de `src/shared/constants`; el tema MUI conserva claro/oscuro.
+El [plan técnico](docs/architecture.md) describe la integración; la [verificación de 0.4.3](docs/verification-v043.md) cubre conservados, excluidos y transferencias, la [verificación de 0.5.0](docs/verification-v05.md) registra ajustes, OCR y correcciones de detección, y la [verificación de 0.5.1](docs/verification-v051.md) cubre la selección de carpetas para analizar. Comandos IPC pequeños delegan en servicios y repositorios Rust. `rename-engine`, `duplicate-service` y `file-operation-service` son compartidos por Inbox y Workspace. La corrección de fechas, la revisión visual de duplicados y la depuración inteligente comparten historial y Undo. Las pruebas de clasificación incluyen contratos IPC, etiquetas superpuestas, protección persistente de copias idénticas, selección explícita, límites, cancelación, vistas previas, errores parciales y respuestas tardías. Los textos se centralizan en diccionarios de `src/shared/constants`; el tema MUI conserva claro/oscuro.
 
 SQLite admite más Workspaces y el explorador tiene una fábrica de stores independientes para futuros paneles. Selección de múltiples Workspaces, Dual Pane y rutas recientes quedan para otra versión. Edición de fechas internas EXIF/QuickTime, fechas manuales, ExifTool, reglas avanzadas y ejecución automática siguen fuera de esta versión.

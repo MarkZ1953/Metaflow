@@ -7,6 +7,10 @@ mod services;
 use services::access_service::FolderAccess;
 use tauri::Manager;
 
+pub(crate) fn normalize_media_assets(path: std::path::PathBuf) -> std::path::PathBuf {
+    dunce::canonicalize(&path).unwrap_or(path)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -26,11 +30,22 @@ pub fn run() {
                 .unwrap_or(directory);
             std::fs::create_dir_all(&directory)?;
             let db = database::Database::open(&directory.join("metaflow.sqlite"))?;
-            let engine = services::inbox_service::InboxEngine::open(
+            let mut engine = services::inbox_service::InboxEngine::open(
                 db,
                 app.state::<FolderAccess>().inner().clone(),
                 directory.join("metaflow.log"),
             )?;
+            engine.media_assets = app.path().resource_dir()?.join("classification");
+            #[cfg(debug_assertions)]
+            if !engine
+                .media_assets
+                .join("vision_model_uint8.onnx")
+                .is_file()
+            {
+                engine.media_assets = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                    .join("resources/classification");
+            }
+            engine.media_assets = normalize_media_assets(engine.media_assets);
             services::history_service::recover(&engine)?;
             services::workspace_service::restore(&engine)?;
             services::watcher_service::start(engine.clone(), app.handle().clone());
@@ -65,8 +80,24 @@ pub fn run() {
             commands::duplicates::scan_duplicates,
             commands::duplicates::preview_duplicate_cleanup,
             commands::duplicates::execute_duplicate_cleanup,
+            commands::duplicate_review::scan_duplicate_review,
+            commands::duplicate_review::preview_duplicate_image,
+            commands::duplicate_review::dismiss_duplicate_comparison,
+            commands::duplicate_review::reset_duplicate_dismissals,
+            commands::duplicate_review::remove_duplicate_file,
             commands::metadata::preview_file_dates,
             commands::metadata::execute_file_dates,
+            commands::classification::scan_classification_review,
+            commands::classification::select_classification_folders,
+            commands::classification::load_classification_settings,
+            commands::classification::save_classification_settings,
+            commands::classification::set_classification_categories,
+            commands::classification::clear_classification_corrections,
+            commands::classification::preview_classified_media,
+            commands::classification::set_classification_protected,
+            commands::classification::remove_classified_files,
+            commands::classification::preview_classified_transfer,
+            commands::classification::execute_classified_transfer,
         ])
         .run(tauri::generate_context!())
         .expect("Could not start Metaflow");

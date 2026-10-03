@@ -1,3 +1,6 @@
+pub mod classification;
+#[path = "duplicate-review.rs"]
+pub mod duplicate_review;
 pub mod duplicates;
 pub mod files;
 pub mod folders;

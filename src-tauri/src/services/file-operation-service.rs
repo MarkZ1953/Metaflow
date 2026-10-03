@@ -10,6 +10,7 @@ use crate::{
     },
 };
 use std::{
+    fs::File,
     path::{Path, PathBuf},
     sync::atomic::Ordering,
 };
@@ -34,6 +35,16 @@ pub fn execute(
     plan: &OrganizationPlan,
     progress: impl Fn(BatchProgress),
     validate: impl Fn(&PlanItem) -> AppResult<()>,
+) -> AppResult<Operation> {
+    execute_with_keeper_check(engine, plan, progress, validate, |_| Ok(()))
+}
+/// Additional review facts are checked while the executor holds the keeper exclusively.
+pub fn execute_with_keeper_check(
+    engine: &InboxEngine,
+    plan: &OrganizationPlan,
+    progress: impl Fn(BatchProgress),
+    validate: impl Fn(&PlanItem) -> AppResult<()>,
+    check_keeper: impl Fn(&File) -> AppResult<()>,
 ) -> AppResult<Operation> {
     engine.cancelled.store(false, Ordering::Relaxed);
     let mut operation = Operation {
@@ -113,6 +124,12 @@ pub fn execute(
                     return super::folder_operation_service::execute_item(engine, item);
                 }
                 if planned.backup {
+                    if super::media_classification_service::is_protected_hash(
+                        engine,
+                        &planned.hash,
+                    )? {
+                        return Err(AppError::new("MEDIA_PROTECTED"));
+                    }
                     let recovery = Path::new(&planned.destination_path)
                         .parent()
                         .ok_or_else(|| AppError::new("INVALID_DESTINATION"))?;
@@ -136,6 +153,7 @@ pub fn execute(
                     {
                         return Err(AppError::new("FILE_CHANGED"));
                     }
+                    check_keeper(&keeper)?;
                     Some(keeper)
                 } else {
                     None

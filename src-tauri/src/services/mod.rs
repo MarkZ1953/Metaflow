@@ -1,7 +1,16 @@
 #[path = "access-service.rs"]
 pub mod access_service;
+#[path = "classification-ai.rs"]
+pub mod classification_ai;
+#[path = "classification-ocr.rs"]
+pub mod classification_ocr;
 #[path = "date-service.rs"]
 pub mod date_service;
+#[path = "duplicate-review-service.rs"]
+pub mod duplicate_review_service;
+#[cfg(test)]
+#[path = "duplicate-review-tests.rs"]
+mod duplicate_review_tests;
 #[path = "duplicate-service.rs"]
 pub mod duplicate_service;
 #[path = "file-date-service.rs"]
@@ -18,6 +27,11 @@ pub mod folder_operation_service;
 pub mod history_service;
 #[path = "inbox-service.rs"]
 pub mod inbox_service;
+#[path = "media-classification-service.rs"]
+pub mod media_classification_service;
+#[cfg(test)]
+#[path = "media-classification-tests.rs"]
+mod media_classification_tests;
 #[path = "metadata-service.rs"]
 pub mod metadata_service;
 #[cfg(test)]

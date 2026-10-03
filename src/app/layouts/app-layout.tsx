@@ -22,6 +22,8 @@ import { useRenameStore } from '../../features/rename/store/rename-store';
 import { DuplicatesView } from '../../features/duplicates/views/duplicates-view';
 import { MetadataView } from '../../features/metadata/views/metadata-view';
 import { MetadataPreview } from '../../features/metadata/components/metadata-preview';
+import { ClassificationView } from '../../features/classification/views/classification-view';
+import { useClassificationStore } from '../../features/classification/store/classification-store';
 
 export function AppLayout() {
   const sidebarOpen = usePreferencesStore((s) => s.sidebarOpen);
@@ -48,7 +50,15 @@ export function AppLayout() {
       {busy && !progress && <LinearProgress aria-label={t.preparing} sx={{ flexShrink: 0 }} />}
       {busy && !progress && (
         <Box sx={{ px: 3, py: 0.5 }}>
-          <Button size="small" onClick={() => void useWorkflowStore.getState().cancel()}>
+          <Button
+            size="small"
+            onClick={() => {
+              const classification = useClassificationStore.getState();
+              void (classification.scanning
+                ? classification.cancel()
+                : useWorkflowStore.getState().cancel());
+            }}
+          >
             {t.cancelAnalysis}
           </Button>
         </Box>
@@ -70,7 +80,9 @@ export function AppLayout() {
       )}
       <Box sx={{ flex: 1, display: 'flex', minHeight: 0 }}>
         {sidebarOpen && <Sidebar />}
-        {page === 'metadata' ? (
+        {page === 'classification' ? (
+          <ClassificationView />
+        ) : page === 'metadata' ? (
           <MetadataView />
         ) : page === 'duplicates' ? (
           <DuplicatesView />

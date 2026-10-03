@@ -37,12 +37,14 @@ export function PlanIssues({
   duplicateAction,
   resolutions,
   onRebuild,
+  allowedDuplicateActions,
 }: {
   plan: OrganizationPlan;
   busy: boolean;
   policy: ConflictPolicy;
   duplicateAction: string;
   resolutions: Record<string, IssueResolution>;
+  allowedDuplicateActions?: readonly string[];
   onRebuild(
     policy: ConflictPolicy,
     duplicateAction: string,
@@ -211,18 +213,23 @@ export function PlanIssues({
                   onChange={(e) => setChoice(e.target.value)}
                 >
                   {identical
-                    ? duplicateChoices.map(([value, label]) => (
-                        <MenuItem
-                          key={value}
-                          value={value}
-                          disabled={
-                            existing.some((i) => i.planned) &&
-                            (value === 'keep-incoming' || value === 'replace-existing')
-                          }
-                        >
-                          {label}
-                        </MenuItem>
-                      ))
+                    ? duplicateChoices
+                        .filter(
+                          ([value]) =>
+                            !allowedDuplicateActions || allowedDuplicateActions.includes(value),
+                        )
+                        .map(([value, label]) => (
+                          <MenuItem
+                            key={value}
+                            value={value}
+                            disabled={
+                              existing.some((i) => i.planned) &&
+                              (value === 'keep-incoming' || value === 'replace-existing')
+                            }
+                          >
+                            {label}
+                          </MenuItem>
+                        ))
                     : [
                         ['skip', w.omitir],
                         ['keep-both', w.conservarAmbos],

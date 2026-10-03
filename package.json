@@ -1,12 +1,13 @@
 {
   "name": "metaflow",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.5.2",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "assets:prepare": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/prepare-classification-assets.ps1",
     "tauri": "node scripts/run-tauri.mjs",
     "desktop:dev": "node scripts/run-tauri.mjs dev",
     "desktop:build": "node scripts/run-tauri.mjs build",

@@ -1,5 +1,9 @@
+#[path = "duplicate-review.rs"]
+pub mod duplicate_review;
 #[path = "file-entry.rs"]
 pub mod file_entry;
+#[path = "media-classification.rs"]
+pub mod media_classification;
 pub mod metadata;
 pub mod organization;
 pub mod rename;

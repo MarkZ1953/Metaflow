@@ -154,5 +154,5 @@ export const workspaceMessages = {
   explorador: 'Explorador',
   transferencias2: 'Transferencias',
   navegacionPrincipal: 'Navegación principal',
-  v: 'v0.2.1',
+  v: 'v0.5.2',
 } as const;

@@ -111,7 +111,7 @@ export const messages = {
   keepInbox: 'permanecen en Inbox',
   conflicts: 'conflictos de nombre',
   moveCount: 'archivos se moverán',
-  historySubtitle: 'Cada transferencia tiene un registro y una ruta de vuelta.',
+  historySubtitle: 'Cada operación tiene un registro y una ruta de vuelta.',
   emptyHistory: 'Tu historial empieza aquí.',
   emptyHistoryBody: 'Las transferencias y sus resultados aparecerán después de ejecutar un lote.',
   undo: 'Deshacer operación',
@@ -143,5 +143,5 @@ export const messages = {
   safetyHint:
     'Los reemplazos conservan respaldos. Undo comprueba el contenido antes de restaurar. Los archivos que no tienen regla permanecen en Inbox.',
   roadmap: 'v0.2 · Workspace y transferencias',
-  versionDescription: 'Metaflow 0.2.1 · Organización y corrección de fechas',
+  versionDescription: 'Metaflow 0.5.2 · Galería con tamaño de página ajustable',
 } as const;

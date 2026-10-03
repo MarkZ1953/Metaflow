@@ -39,6 +39,9 @@ pub struct InboxEngine {
     pub operation_gate: Arc<Mutex<()>>,
     pub cancelled: Arc<AtomicBool>,
     pub log_path: PathBuf,
+    pub duplicate_reviews: Arc<Mutex<super::duplicate_review_service::ReviewRegistry>>,
+    pub media_classifications: Arc<Mutex<super::media_classification_service::MediaRegistry>>,
+    pub media_assets: PathBuf,
 }
 impl InboxEngine {
     pub fn open(db: Database, access: FolderAccess, log_path: PathBuf) -> AppResult<Self> {
@@ -65,6 +68,13 @@ impl InboxEngine {
             operation_gate: Arc::new(Mutex::new(())),
             cancelled: Arc::new(AtomicBool::new(false)),
             log_path,
+            duplicate_reviews: Arc::new(Mutex::new(
+                super::duplicate_review_service::ReviewRegistry::default(),
+            )),
+            media_classifications: Arc::new(Mutex::new(
+                super::media_classification_service::MediaRegistry::default(),
+            )),
+            media_assets: PathBuf::new(),
         })
     }
     pub fn lock(&self) -> AppResult<std::sync::MutexGuard<'_, Runtime>> {

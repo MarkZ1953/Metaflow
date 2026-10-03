@@ -28,8 +28,17 @@ fn main() {
             "scan_duplicates",
             "preview_duplicate_cleanup",
             "execute_duplicate_cleanup",
+            "scan_duplicate_review",
+            "preview_duplicate_image",
+            "dismiss_duplicate_comparison",
+            "reset_duplicate_dismissals",
+            "remove_duplicate_file",
             "preview_file_dates",
             "execute_file_dates",
+            "scan_classification_review",
+            "preview_classified_media",
+            "set_classification_protected",
+            "remove_classified_files",
         ]),
     ))
     .expect("Could not build the Metaflow application manifest");

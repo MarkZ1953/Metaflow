@@ -19,10 +19,12 @@ import AutoAwesomeMotionOutlined from '@mui/icons-material/AutoAwesomeMotionOutl
 import FolderOutlined from '@mui/icons-material/FolderOutlined';
 import DriveFileRenameOutlineRounded from '@mui/icons-material/DriveFileRenameOutlineRounded';
 import FileCopyOutlined from '@mui/icons-material/FileCopyOutlined';
+import PhotoLibraryOutlined from '@mui/icons-material/PhotoLibraryOutlined';
 import { FolderTree } from '../../features/workspace/components/folder-tree';
 import { useWorkflowStore, type Page } from '../../features/inbox/store/workflow-store';
 import { messages as t } from '../../shared/constants/messages';
 import { metadataMessages as m } from '../../shared/constants/metadata-messages';
+import { classificationMessages as c } from '../../shared/constants/classification-messages';
 
 export function Sidebar() {
   const { page, setPage, snapshot, preview, busy } = useWorkflowStore();
@@ -50,6 +52,7 @@ export function Sidebar() {
     { label: w.presetsDeNombres, icon: DriveFileRenameOutlineRounded, page: 'presets' as Page },
     { label: m.title, icon: CalendarMonthRounded, page: 'metadata' as Page },
     { label: w.duplicados, icon: FileCopyOutlined, page: 'duplicates' as Page },
+    { label: c.title, icon: PhotoLibraryOutlined, page: 'classification' as Page },
     {
       label: w.transferencias2,
       icon: FolderOutlined,
