@@ -1,0 +1,36 @@
+fn main() {
+    tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
+        tauri_build::AppManifest::new().commands(&[
+            "select_folder",
+            "read_directory",
+            "forget_folder",
+            "get_inbox",
+            "choose_inbox",
+            "save_date_rules",
+            "retry_inbox",
+            "preview_organization",
+            "execute_organization",
+            "get_history",
+            "undo_operation",
+            "cancel_operation",
+            "get_workspace",
+            "add_workspace_folder",
+            "remove_workspace_folder",
+            "set_workspace_favorite",
+            "create_workspace_folder",
+            "open_file_location",
+            "preview_transfer",
+            "execute_transfer",
+            "get_folder_properties",
+            "get_rename_configuration",
+            "save_rename_configuration",
+            "preview_filename",
+            "scan_duplicates",
+            "preview_duplicate_cleanup",
+            "execute_duplicate_cleanup",
+            "preview_file_dates",
+            "execute_file_dates",
+        ]),
+    ))
+    .expect("Could not build the Metaflow application manifest");
+}

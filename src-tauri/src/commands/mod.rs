@@ -1,0 +1,8 @@
+pub mod duplicates;
+pub mod files;
+pub mod folders;
+pub mod inbox;
+pub mod metadata;
+pub mod organizer;
+pub mod rename;
+pub mod workspace;

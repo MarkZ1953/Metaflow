@@ -1,0 +1,5 @@
+[[permission]]
+identifier = "allow-inbox-workflow"
+description = "Configure selected Inbox/destinations, review immutable plans and execute/undo batches."
+commands.allow = ["get_inbox", "choose_inbox", "save_date_rules", "retry_inbox", "preview_organization", "execute_organization", "get_history", "undo_operation", "cancel_operation", "get_workspace", "add_workspace_folder", "remove_workspace_folder", "set_workspace_favorite", "create_workspace_folder", "open_file_location", "preview_transfer", "execute_transfer", "get_rename_configuration", "save_rename_configuration", "preview_filename", "scan_duplicates", "preview_duplicate_cleanup", "execute_duplicate_cleanup", "get_folder_properties", "preview_file_dates", "execute_file_dates"]
+

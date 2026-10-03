@@ -1,0 +1,14 @@
+[[permission]]
+identifier = "allow-select-folder"
+description = "Open the native folder picker and authorize the selected directory for this session."
+commands.allow = ["select_folder"]
+
+[[permission]]
+identifier = "allow-read-directory"
+description = "Read a directory after checking its canonical path against session grants in Rust."
+commands.allow = ["read_directory"]
+
+[[permission]]
+identifier = "allow-forget-folder"
+description = "Revoke a folder authorization."
+commands.allow = ["forget_folder"]
